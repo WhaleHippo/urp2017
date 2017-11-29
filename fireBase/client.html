@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Firebase.html</title>
+<body>
+<button onclick="transition()">Update</button>
+<svg width="1" height="5"></svg>
+<div id = "debug_div">debug result</div>
+
+</body>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+
+<script>
+
+var config = {
+		  apiKey: "AIzaSyDMt31NS9QxSP8qPkVZjA2nCtDCn8-BpmM",
+		  authDomain: "firetest-d88ea.firebaseapp.com",
+		  databaseURL: "https://firetest-d88ea.firebaseio.com",
+		  projectId: "firetest-d88ea",
+		  storageBucket: "firetest-d88ea.appspot.com",
+		  messagingSenderId: "1027673372152"
+};
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+database.ref('/users').set({
+	username: "index",
+	email: "naver.com"
+});
+
+var i = 15;
+function transition(){
+		  i++;
+		  database.ref('/users').set({
+					 username: i,
+					 email: "><"
+		  });
+		  database.ref('/test/'+i).set(Math.random());
+		  database.ref('/users/').once('value').then(function(snapshot) {//read는 파이어 베이스에 callback을 둬서 변화가 생길때마다 가져온다. once('value')가 있으면, 콜백은 무시하고 단ㅇ 한번만, once('value')가 없으면 변화가 생길때마다 callback한다.
+					 var username = snapshot.val().username;
+					 console.log(snapshot.val());
+					 //alert(username)
+		  });
+}
+
+for(i =0; i< 20; i++){
+		  database.ref('/test/'+i).set(i);
+}
+
+for(i=0; i< 10;i++){
+		  database.ref('/test/'+i).remove();
+}
+
+database.ref('/').on('value', function(snapshot){
+		  var command = snapshot.val().command;
+		  console.log('firebase change : '+command)
+})
+
+</script>

@@ -1,0 +1,149 @@
+<!--DOCTYPE html-->
+ 
+<meta charset="UTF-8">
+<title>server</title>
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<style>
+
+</style>
+<script>
+//변수모음
+ 
+var socket = 0;
+
+var firebaseConfig = 0;
+var database = 0;
+ 
+function getRemoteAddress() {
+	input = $('input[name="remote_address"]').val();
+	if (input == '')
+		return '';
+  
+	pattern = /^(?:(?:ws:\/\/)?([a-zA-Z\.]+)(?::(\d+))?)$/g;
+ 
+	result = pattern.exec(input);
+	address = '';
+	if (result != null) {
+		if (typeof result[2] === 'undefined')
+			port = 9999
+		else
+			port = result[2]
+		address = 'ws://'+result[1]+':'+port;
+	}
+	return address;
+}
+ 
+function socketOpened() {
+	$('input[name="remote_address"]').attr('disabled', true);
+	$('#button_connect').hide();
+	$('#button_disconnect').show();	
+	printMessage('connected');
+	console.log('socket opened');
+}
+ 
+function socketClosed() {
+	console.log('socket closed');
+	
+	$('input[name="remote_address"]').attr('disabled', false);
+	$('#button_connect').show();
+	$('#button_disconnect').hide();
+	printMessage('not connected');
+	socket = 0;
+}
+ 
+function handleMessage(msg) {
+	lines = msg.replace('\r\n', '\n').split('\n');
+	for (i in lines){
+		printMessage(lines[i]);
+	}
+	//추가한것
+	eval(msg)
+	//
+}
+
+function connect() {
+	if (socket != 0 && socket.readyState != 1)
+		return;
+	printMessage('connecting...')
+	$('input[name="remote_address"]').attr('disabled', true);
+	$('#button_connect').hide();
+	
+	socket = new WebSocket(remote_address);
+	socket.onopen = function() {
+		socketOpened();
+	};
+	socket.onerror = function(error) {
+		console.log('socket error');
+		console.log(error);
+	};
+	socket.onmessage = function(event) {
+		handleMessage(event.data);
+	};
+	socket.onclose = function() {
+		socketClosed();
+	};
+}
+ 
+function disconnect() {
+	if (socket != 0) {
+		printMessage('disconnecting...')
+		socket.close();
+	}
+}
+ 
+function initConnectionUI() {
+	$('#button_connect').click(function() {
+		remote_address = getRemoteAddress();
+		if (remote_address != '') {
+			connect();
+		}
+	});
+	$('#button_disconnect').click(disconnect);
+}
+ 
+function printMessage(msg) {
+	console.log(msg);
+}
+ 
+$(document).ready(function() {
+	initConnectionUI();
+	$('input[name="command_line"]').keyup(function(e) {
+		if (e.which == 13) {
+			if (socket != 0 && socket.readyState == 1)
+				socket.send($(this).val());
+			else
+				console.log('socket is not alive');
+			$(this).val('');
+		}
+	});
+	//여기까지가 소켓
+
+	firebaseConfig = {
+		apiKey: "AIzaSyDMt31NS9QxSP8qPkVZjA2nCtDCn8-BpmM",
+		authDomain: "firetest-d88ea.firebaseapp.com",
+		databaseURL: "https://firetest-d88ea.firebaseio.com",
+		projectId: "firetest-d88ea",
+		storageBucket: "firetest-d88ea.appspot.com",
+		messagingSenderId: "1027673372152"
+	};
+	firebase.initializeApp(firebaseConfig);
+	database = firebase.database();
+	database.ref('/users').set({
+		username: "index",
+		email: "naver.com"
+	}); 
+
+});
+
+
+
+
+</script>
+ 
+ 
+<div>
+<input name="remote_address" type="text" value="localhost:8765"><button id="button_connect">connect</button><button id="button_disconnect" style="display:none">disconnect</button>
+<input class="dos" name="command_line" type="text" style="width: 631px">
