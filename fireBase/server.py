@@ -111,5 +111,6 @@ def start_server (port):
         #send(client, "alert("+ str(chat) +")")
         send(client, "database.ref('/hanzo').set('"+ str(chat) +"');")
 
+
  
 start_server(8765)

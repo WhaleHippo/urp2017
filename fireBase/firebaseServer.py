@@ -111,5 +111,5 @@ class firebaseServer:
         send(self.client, "database.ref('"+str(url)+"').remove();")
 
     def callback(self, url):
-        send(self.client, "database.ref('"+str(url)+"').remove();")
+        send(self.client, "database.ref('"+ str(url) +"').on('value', function(s){socket.send(s.val());})")
 
