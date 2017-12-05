@@ -51,7 +51,7 @@ def handshake(client):
            "\r\n"
     r = response % ((base64.b64encode(hashlib.sha1(key).digest()),))
     client.send(r)
-flag = 5
+flag = 3
 def handle_client (client, addr):
     global flag
     handshake(client)
@@ -66,8 +66,9 @@ def handle_client (client, addr):
                     break
                 msg = data.decode('utf-8', 'ignore')
                 send(client, "echo : " + msg)
-                print msg
+                print "recv " + msg
                 flag = msg
+
                 '''
                 try:
                     output = unicode(subprocess.check_output(msg, stderr=subprocess.STDOUT, shell=True), 'cp949')
@@ -83,7 +84,7 @@ def handle_client (client, addr):
         print str(e)
     print "disconnected"
     client.close()
- 
+
 #start_server(8765)
 class firebaseServer:
     def __init__(self, port):
@@ -101,7 +102,7 @@ class firebaseServer:
         '''
         while True:
             chat = str(raw_input("input data : "));
-            send(client, "database.ref('/hanzo').set('"+ str(chat) +"');")A
+            send(client, "database.ref('/hanzo').set('"+ str(chat) +"');")
         '''
 
     def update(self, url, value):
@@ -112,4 +113,5 @@ class firebaseServer:
 
     def callback(self, url):
         send(self.client, "database.ref('"+ str(url) +"').on('value', function(s){socket.send(s.val());})")
+        #,,,self.callbackFunction = threading.Thread(target = self.callbackTest, args = ()).start()
 
