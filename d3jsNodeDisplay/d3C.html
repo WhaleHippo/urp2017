@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Index.html</title>
+<body>
+<button onclick="update">Update</button>
+<svg width="1000" height="500"></svg>
+<div id = "debug_div">debug result</div>
+
+</body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3/firebase.js"></script>
+<!--
+<script src = "d3/test.js"> </script>
+-->
+
+<script>
+var config = {
+    apiKey: "AIzaSyDMt31NS9QxSP8qPkVZjA2nCtDCn8-BpmM",
+    authDomain: "firetest-d88ea.firebaseapp.com",
+    databaseURL: "https://firetest-d88ea.firebaseio.com",
+    projectId: "firetest-d88ea",
+    storageBucket: "firetest-d88ea.appspot.com",
+    messagingSenderId: "1027673372152"
+};
+firebase.initializeApp(config);
+
+var database = firebase.database();
+var i = 0;
+var svg = d3.select("body").select("svg");
+var layerData = []
+var layer = []
+var networkData;
+var data = []
+var lineData = []
+init();
+database.ref('/').on('value', function(snapshot){
+		  networkData = snapshot.val();
+		  console.log('firebase change : ');
+		  for(i=0;i<3;i++){
+		  	eval("layerData["+i+"] = networkData.layer"+i)
+		  }/*
+		  layerData[0] = networkData.layer0;
+		  layerData[1] = networkData.layer1;
+		  layerData[2] = networkData.layer2;*/
+			console.log(layerData[0])
+		  update();
+
+})
+//database.ref('/layer/1').set(1);
+
+function init(){
+			
+			var va = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+/*			d3.select("body").selectAll("svg").
+			data(va).enter().
+			append("svg").
+			attr("width",function(d){return d}).
+			attr("height",function(d){return d}).
+			style("background","red").
+			attr("id", function(d,i){
+				return "layer"+i
+			}).
+			on("click", function(d, i){
+				videoElement = document.getElementById("layer10")
+				alert(videoElement.getAttribute('id') + i)
+			})*/
+			svg.selectAll(".layer0").data(va).
+					 enter().
+					 append("circle").
+					 attr("class", "layer0").
+					 attr("r", function(d,i){return d}).
+					 attr("cx", function(d,i){return 20}).
+					 attr("cy", function(d,i){return i*50}).
+					 on("click", function(d,i){
+					 		var va = [0,15,15,15]
+					 		console.log(i + " " + d)
+					 		svg.selectAll("circle").data(va).
+					 		transition().
+					 		duration(200).
+							attr("r", function(d){return d});
+
+					 });
+			layer[0] = svg.selectAll(".layer0");
+			
+			svg.selectAll(".layer1").data(va).
+					 enter().
+					 append("circle").
+					 attr("class", "layer1").
+					 attr("r", function(d,i){return d}).
+					 attr("cx", function(d,i){return 70}).
+					 attr("cy", function(d,i){return i*50}).
+					 on("click", function(d,i){
+					 		var va = [0,15,15,15]
+					 		console.log(i + " " + d)
+					 		svg.selectAll("circle").data(va).
+					 		transition().
+					 		duration(200).
+							attr("r", function(d){return d});
+
+					 });
+			layer[1] = svg.selectAll(".layer1");
+
+			svg.selectAll(".layer2").data(va).
+					 enter().
+					 append("circle").
+					 attr("class", "layer2").
+					 attr("r", function(d,i){return d}).
+					 attr("cx", function(d,i){return 120}).
+					 attr("cy", function(d,i){return i*50}).
+					 on("click", function(d,i){
+					 		var va = [0,15,15,15]
+					 		console.log(i + " " + d)
+					 		svg.selectAll("circle").data(va).
+					 		transition().
+					 		duration(200).
+							attr("r", function(d){return d});
+
+					 });
+			layer[2] = svg.selectAll(".layer2");
+			
+}
+
+
+function update(){
+		  layer[0].
+					 data(layerData[0]).
+					 transition().
+					 duration(200).
+					 attr("r", 10).
+					 attr("r", function(d,i){return d}).
+					 attr("cx", function(d,i){return 20}).
+					 attr("cy", function(d,i){return i*50})
+					 
+			layer[1].
+					 data(layerData[1]).
+					 transition().
+					 duration(200).
+					 attr("r", 10).
+					 attr("r", function(d,i){return d}).
+					 attr("cx", function(d,i){return 70}).
+					 attr("cy", function(d,i){return i*50})
+
+			layer[2].
+					 data(layerData[2]).
+					 transition().
+					 duration(200).
+					 attr("r", 10).
+					 attr("r", function(d,i){return d}).
+					 attr("cx", function(d,i){return 120}).
+					 attr("cy", function(d,i){return i*50})
+}
+
+
+		  
+</script>

@@ -10,8 +10,10 @@ while True:
     val = raw_input("input val : ");
     firebase.update(url, val);
 '''
-url = raw_input("input url : ");
-val = raw_input("input val : ");
-firebase.update(url, val);
+
+
 for i in range(25):
-    firebase.update(str(i), i*i+i);
+    url = raw_input("input url : ");
+    val = raw_input("input val : ");
+    firebase.update(url, val);
+    #firebase.update("/test/"+str(i), i*i+i);

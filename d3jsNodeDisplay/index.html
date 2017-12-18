@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Index.html</title>
+<body>
+<button onclick="transition()">Update</button>
+<svg width="1000" height="500"></svg>
+<div id = "debug_div">debug result</div>
+
+</body>
+<script src = "d3/d3.min.js"> </script>
+<script src="d3/firebase.js"></script>
+<!--
+<script src = "d3/test.js"> </script>
+-->
+
+<script>
+
+var config = {
+    apiKey: "AIzaSyDMt31NS9QxSP8qPkVZjA2nCtDCn8-BpmM",
+    authDomain: "firetest-d88ea.firebaseapp.com",
+    databaseURL: "https://firetest-d88ea.firebaseio.com",
+    projectId: "firetest-d88ea",
+    storageBucket: "firetest-d88ea.appspot.com",
+    messagingSenderId: "1027673372152"
+};
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+
+
+
+
+var i = 0;
+var svg = d3.select("body").select("svg");
+var data = []
+var lineData = []
+data.push(Math.random()*100)
+data.push(Math.random()*100)
+data.push(Math.random()*100)
+
+
+function transition(){
+	console.log(i)
+	d3.select("body").select("#debug_div").text("add data");
+	data.push(Math.random()*100)
+svg.selectAll("circle").
+   data(data).
+   enter().
+   append("circle").
+   attr("r", function(d,i){return i}).
+   attr("cx", function(d,i){return i*d}).
+   attr("cy", function(d){return d}).
+   on("click", function(d, i){
+
+	database.ref('/users').set({
+	    username: i,
+	    email: "naver.com"
+	  });
+	d3.select("body").select("#debug_div").text(i + " : " + d)
+   }).
+   on("mouseover", function(){
+database.ref('/users/').once('value').then(function(snapshot) {
+  var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
+console.log(snapshot.val());
+console.log(username)
+});
+	d3.select("body").select("#debug_div").text("mouseover")
+	}
+     ).
+   on("mouseout", function(){
+	d3.select("body").select("#debug_div").text("mouseout")
+   })
+
+}
+console.log(data)
+svg.selectAll("circle").
+   data(data).
+   enter().
+   append("circle").
+   attr("r", function(d,i){return i}).
+   attr("cx", function(d,i){return i*d}).
+   attr("cy", function(d){return d}).
+   on("click", function(d, i){
+	d3.select("body").select("#debug_div").text(i + " : " + d)
+   }).
+   on("mouseover", function(){
+	d3.select("body").select("#debug_div").text("mouseover")
+	}
+     ).
+   on("mouseout", function(){
+	d3.select("body").select("#debug_div").text("mouseout")
+   })
+</script>
