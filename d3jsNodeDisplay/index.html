@@ -2,12 +2,13 @@
 <meta charset="utf-8">
 <title>Index.html</title>
 <body>
-<button onclick="transition()">Update</button>
 <svg width="1000" height="500"></svg>
+<button onclick="transition()">Update</button>
 <div id = "debug_div">debug result</div>
 
 </body>
-<script src = "d3/d3.min.js"> </script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="d3/firebase.js"></script>
 <!--
 <script src = "d3/test.js"> </script>
@@ -26,11 +27,52 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database();
+var layerData = []
+var networkData;
+var nodeData
 
+database.ref('/').on('value', function(snapshot){
+      layerData = []
+		  networkData = snapshot.val();
+		  console.log('firebase change : ');
+      nodeData = networkData.node;
 
+      for(var i=0; i < nodeData.length; i++){
+        for(var j=0; j < nodeData[i].length; j++){
+          for(var k=0; k < nodeData[i][j].length; k++){
+            console.log(nodeData[i][j][k]);
+          }
+        }
+      }
 
+})
 
+function transition(){
+  for(var i=0; i < 4; i++){
+    for(var j=0; j < 6; j++){
+      for(var k=0; k < 6; k++){
+        database.ref('/node/'+i+"/"+j+"/"+k).set(parseInt(""+3*Math.random())/2);
+      }
+    }
+  }
+  for(var i=0; i < 5; i++){
+    for(var j=0; j < 6; j++){
+      database.ref('/layer/'+i+"/"+j).set(parseInt(""+20*Math.random()))
+    }
+  }
+}
+playAlert = setInterval(function() {
+  var i = parseInt(""+3*Math.random());
+  var j = parseInt(""+5*Math.random());
+  database.ref('/layer/'+i+"/"+j).set(parseInt(""+20*Math.random()));
+  i = parseInt(""+4*Math.random());
+  j = parseInt(""+5*Math.random());
+  var k = parseInt(""+5*Math.random());
+  database.ref('/node/'+i+"/"+j+"/"+k).set(parseInt(""+1*Math.random()))
 
+}, 1000);
+
+/*
 var i = 0;
 var svg = d3.select("body").select("svg");
 var data = []
@@ -90,5 +132,8 @@ svg.selectAll("circle").
      ).
    on("mouseout", function(){
 	d3.select("body").select("#debug_div").text("mouseout")
-   })
+})*/
+
+
+
 </script>
