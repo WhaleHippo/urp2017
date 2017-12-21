@@ -3,7 +3,8 @@
 <title>Index.html</title>
 <body>
 <svg width="1000" height="500"></svg>
-<button onclick="transition()">Update</button>
+<button onclick="dataGenration()">data generate</button>
+<button onclick="genrationStop()">generate stop</button>
 <div id = "debug_div">debug result</div>
 
 </body>
@@ -61,16 +62,31 @@ function transition(){
     }
   }
 }
-playAlert = setInterval(function() {
-  var i = parseInt(""+3*Math.random());
-  var j = parseInt(""+5*Math.random());
+var playAlert = setInterval(function() {
+  var i = 1+parseInt(""+2*Math.random());
+  var j = 1+parseInt(""+4*Math.random());
   database.ref('/layer/'+i+"/"+j).set(parseInt(""+20*Math.random()));
   i = parseInt(""+4*Math.random());
   j = parseInt(""+5*Math.random());
   var k = parseInt(""+5*Math.random());
-  database.ref('/node/'+i+"/"+j+"/"+k).set(parseInt(""+1*Math.random()))
+  database.ref('/node/'+i+"/"+j+"/"+k).set(parseInt(""+5*Math.random()))
 
-}, 1000);
+}, 500);
+function dataGenration(){
+	clearInterval(playAlert)
+	playAlert = setInterval(function() {
+	  var i = 1+parseInt(""+2*Math.random());
+	  var j = 1+parseInt(""+4*Math.random());
+	  database.ref('/layer/'+i+"/"+j).set(parseInt(""+20*Math.random()));
+	  i = parseInt(""+4*Math.random());
+	  j = parseInt(""+5*Math.random());
+	  var k = parseInt(""+5*Math.random());
+	  database.ref('/node/'+i+"/"+j+"/"+k).set(parseInt(""+5*Math.random()))
+	}, 500);
+}
+function genrationStop(){
+	clearInterval(playAlert)
+}
 
 /*
 var i = 0;
