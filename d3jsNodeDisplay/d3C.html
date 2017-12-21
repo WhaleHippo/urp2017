@@ -10,11 +10,12 @@
 <button onclick="debugFunction()">debug</button>
 <button onclick="pre()">pre</button>
 <button onclick="forward()">forward</button>
+<input id="command" type="text" value="input commands">
 
 </body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-<!--<script src="d3/firebase.js"></script>-->
+
 <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
 
 <!--
@@ -49,7 +50,7 @@ var nodeNum = [6,6,6,6]; //metaData; nodeData[i].length
 
 var lineData = [];
 init();
-database.ref('/').on('value', function(snapshot){
+database.ref('/tensorData/').on('value', function(snapshot){
 		  networkData = snapshot.val();
 		  console.log('firebase change : ');
       layerData = networkData.layer;
@@ -91,7 +92,7 @@ function init(){
         		var str = String($(this).attr("class"));
         		
         		//data sync firebase
-        		database.ref('/layer/'+str[5]+"/"+i).set(parseFloat($(this).attr("r")));
+        		database.ref('/tensorData/layer/'+str[5]+"/"+i).set(parseFloat($(this).attr("r")));
         	}
 
           console.log(this)
@@ -138,7 +139,7 @@ function init(){
         			var str = String($(this).attr("class"));
         			
         			//data sync firebase
-        			database.ref('/node/'+str[4]+"/"+str[7]+"/"+i).set(parseFloat($(this).attr("stroke-width")));
+        			database.ref('/tensorData/node/'+str[4]+"/"+str[7]+"/"+i).set(parseFloat($(this).attr("stroke-width")));
         		}
             //alert($(this).attr("class"));
             
@@ -234,6 +235,17 @@ function update(){
   }
 }
 
+$(document).ready(function() {
+	$("#command").keyup(function(e){
+		if(e.which == 13){
+			database.ref('/command').set($(this).val());
+			$(this).val('')
+		}
+	})
+
+
+
+});
 
 
 
