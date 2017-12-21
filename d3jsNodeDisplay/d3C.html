@@ -94,11 +94,18 @@ function init(){
           console.log($(this).attr("class"));
           console.log($(this).attr("r"));
 
-        });
-        layer[k].on("wheel.zoom", function(d){
-          var cR = $(this).attr("r")
-
-        	$(this).attr("r", parseFloat(cR)+0.1)
+        })
+        //zoom in-out event
+        $(".layer"+k).on('mousewheel DOMMouseScroll', function(e){
+          var E = e.originalEvent;
+          var delta = 0;
+          if(E.detail){
+          	delta = E.detail * -1;
+          }
+          else{
+          	delta = E.wheelDelta / 40;
+          }
+          $(this).attr("r", parseFloat($(this).attr("r")) + 0.1*delta)
         })
       }
       va = [0,0,0,0,0,0];
@@ -129,6 +136,19 @@ function init(){
             
             console.log($(this).attr("stroke-width"))
           })
+          //zoom in - out event
+          $(".node"+j+"by"+k).on('mousewheel DOMMouseScroll', function(e){
+          	var E = e.originalEvent;
+          	var delta = 0;
+          	if(E.detail){
+          		delta = E.detail * -1;
+          	}
+          	else{
+          		delta = E.wheelDelta / 40;
+          	}
+          	$(this).attr("stroke-width", parseFloat($(this).attr("stroke-width")) + 0.1*delta);
+          })
+          
         }
       }
 
