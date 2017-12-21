@@ -88,6 +88,10 @@ function init(){
         	else{
         		$(this).attr("lock", "F");
         		$(this).attr("fill", "purple");
+        		var str = String($(this).attr("class"));
+        		
+        		//data sync firebase
+        		database.ref('/layer/'+str[5]+"/"+i).set(parseFloat($(this).attr("r")));
         	}
 
           console.log(this)
@@ -123,7 +127,7 @@ function init(){
               attr("stroke-width", function(d,i){return d+1}).
               attr("lock", "F");
           node[j][k] = svg.selectAll(".node"+j+"by"+k);
-          node[j][k].on("click", function(){
+          node[j][k].on("click", function(d, i){
           	if($(this).attr("lock") == "F"){
         			$(this).attr("lock", "T");
         			$(this).attr("stroke", "black");
@@ -131,6 +135,10 @@ function init(){
         		else{
         			$(this).attr("lock", "F");
         			$(this).attr("stroke", "blue");
+        			var str = String($(this).attr("class"));
+        			
+        			//data sync firebase
+        			database.ref('/node/'+str[4]+"/"+str[7]+"/"+i).set(parseFloat($(this).attr("stroke-width")));
         		}
             //alert($(this).attr("class"));
             
