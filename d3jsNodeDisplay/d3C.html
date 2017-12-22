@@ -11,8 +11,8 @@
 </div>
 </div>
 <div id = "debug_div">debug result</div>
-<button onclick="debugFunction()">debug</button>
 <button onclick="pre()">pre</button>
+<button onclick="dataGenration()">auto</button>
 <button onclick="forward()">forward</button>
 <input id="command" type="text" value="input commands">
 
@@ -44,13 +44,16 @@ var svg = d3.select("body").select("svg");
 var networkData;
 
 var layerData = [];
+var layerDataS = new Array(); //layerData/time
 var layer = [];
 var layerNum = 5; //metaData; layerData.length
 
 var nodeData = [];
+var nodeDataS = [];//nodeData/time
 var node = [[],[],[],[],[],[],[],[],[],[],[]];
-
 var nodeNum = [6,6,6,6]; //metaData; nodeData[i].length
+
+var dataTime = 0;
 
 var lineData = [];
 init();
@@ -58,7 +61,10 @@ database.ref('/tensorData/').on('value', function(snapshot){
 		  networkData = snapshot.val();
 		  console.log('firebase change : ');
       layerData = networkData.layer;
+      layerDataS.push(layerData);
       nodeData = networkData.node;
+      nodeDataS.push(nodeData)
+      dataTime = dataTime + 1;
       layerNum = layerData.length;
       for(var i = 0; i<nodeData.length; i++){
         nodeNum[i] = layerData[i].length;
@@ -166,13 +172,40 @@ function init(){
       }
 
 }
-
-function debugFunction(){
-  alert("!")
+var playAlert;
+function dataGenration(){
+	clearInterval(playAlert)
+	playAlert = setInterval(function() {
+	  var i = 1+parseInt(""+2*Math.random());
+	  var j = 1+parseInt(""+4*Math.random());
+	  database.ref('/tensorData/layer/'+i+"/"+j).set(parseInt(""+20*Math.random()));
+	  i = parseInt(""+4*Math.random());
+	  j = parseInt(""+5*Math.random());
+	  var k = parseInt(""+5*Math.random());
+	  database.ref('/tensorData/node/'+i+"/"+j+"/"+k).set(parseInt(""+5*Math.random()))
+	}, 500);
 }
 function pre(){
+	clearInterval(playAlert);
+  dataTime = dataTime - 1;
+  if(dataTime < 0){
+    alert("First data index!");
+    dataTime = 0;
+  }
+  layerData = layerDataS[dataTime];
+  nodeData = nodeDataS[dataTime];
+  update();
 }
 function forward(){
+	clearInterval(playAlert);
+  dataTime = dataTime + 1;
+  if(dataTime >= layerDataS.length){
+    alert("Last data index!");
+    dataTime = layerDataS.length -1;
+  }
+  layerData = layerDataS[dataTime];
+  nodeData = nodeDataS[dataTime];
+  update();
 }
 
 function update(){
