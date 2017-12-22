@@ -12,7 +12,7 @@
 </div>
 <div id = "debug_div">debug result</div>
 <button onclick="pre()">pre</button>
-<button onclick="dataGenration()">auto</button>
+<button id="button_auto" onclick="dataGenration()">auto</button> <button id="button_stop" onclick="dataStop()" style="display:none">Stop</button>
 <button onclick="forward()">forward</button>
 <input id="command" type="text" value="input commands">
 
@@ -173,6 +173,18 @@ function init(){
 
 }
 var playAlert;
+
+function pre(){
+  dataTime = dataTime - 1;
+  if(dataTime < 0){
+    alert("First data index!");
+    dataTime = 0;
+  }
+  layerData = layerDataS[dataTime];
+  nodeData = nodeDataS[dataTime];
+  update();
+}
+
 function dataGenration(){
 	clearInterval(playAlert)
 	playAlert = setInterval(function() {
@@ -184,18 +196,17 @@ function dataGenration(){
 	  var k = parseInt(""+5*Math.random());
 	  database.ref('/tensorData/node/'+i+"/"+j+"/"+k).set(parseInt(""+5*Math.random()))
 	}, 500);
+  $('#button_auto').hide();
+  $('#button_stop').show();
 }
-function pre(){
+
+function dataStop(){
 	clearInterval(playAlert);
-  dataTime = dataTime - 1;
-  if(dataTime < 0){
-    alert("First data index!");
-    dataTime = 0;
-  }
-  layerData = layerDataS[dataTime];
-  nodeData = nodeDataS[dataTime];
-  update();
+  $('#button_auto').show();
+  $('#button_stop').hide();
 }
+
+
 function forward(){
 	clearInterval(playAlert);
   dataTime = dataTime + 1;
