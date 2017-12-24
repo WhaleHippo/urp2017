@@ -3,7 +3,7 @@
 #from : http://blog.naver.com/PostView.nhn?blogId=chandong83&logNo=220929493682&categoryNo=29&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView&userTopListOpen=true&userTopListCount=20&userTopListManageOpen=false&userTopListCurrentPage=1
 import cv2
 import mod1
-
+'''
 CAM_ID = 0
 FRAME_COUNT = 0
 cam = cv2.VideoCapture(CAM_ID)
@@ -53,3 +53,6 @@ cam.release()
 cv2.destroyWindow('CAM_Window')
 cv2.destroyWindow('CAM_RotateWindow')
 cv2.destroyWindow('CAM_edge_Window')
+'''
+frame = cv2.imread("parking.jpg");
+cv2.imwrite("result.png", mod1.edge(frame));
