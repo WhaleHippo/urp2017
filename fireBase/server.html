@@ -134,7 +134,15 @@ $(document).ready(function() {
 	database.ref('/users').set({
 		username: "index",
 		email: "naver.com"
-	}); 
+	});
+	database.ref('/command/').on('value', function(snapshot){
+		var commandData = snapshot.val();
+		console.log('firebase command change :' + commandData);
+		if(socket != 0 && socket.readyState == 1)
+			socket.send(commandData);
+		else
+			console.log('socket is not alive');
+	});
 
 });
 

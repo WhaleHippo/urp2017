@@ -6,6 +6,11 @@ import base64
 import threading
 import struct
 #import subprocess
+
+def msgCon(msg):
+    return 0;
+
+
  
 def send(client, msg):
     data = bytearray(msg.encode('utf-8'))
@@ -51,9 +56,7 @@ def handshake(client):
            "\r\n"
     r = response % ((base64.b64encode(hashlib.sha1(key).digest()),))
     client.send(r)
-flag = 3
 def handle_client (client, addr):
-    global flag
     handshake(client)
     try:
         while 1:
@@ -66,8 +69,9 @@ def handle_client (client, addr):
                     break
                 msg = data.decode('utf-8', 'ignore')
                 send(client, "echo : " + msg)
-                print "recv " + msg
-                flag = msg
+                msgCon(msg)
+                
+                
 
                 '''
                 try:
@@ -110,6 +114,10 @@ class firebaseServer:
 
     def remove(self, url):
         send(self.client, "database.ref('"+str(url)+"').remove();")
+        
+    def get(self, url):
+        carry = "asfsdfs";
+        send(self.client, "database.ref('"+str(url)+"').once('value').then(function(s){socket.send(s.val());});")
 
     def callback(self, url):
         send(self.client, "database.ref('"+ str(url) +"').on('value', function(s){socket.send(s.val());})")

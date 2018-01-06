@@ -6,13 +6,13 @@
 <div style = "width:500px; height:350px; float:left;"><svg width="500" height="350"></svg></div>
 <div style = "width:500px; height:350px; float:right;">
 <video width="500px" height="350px" controls>
-<source src="https://firebasestorage.googleapis.com/v0/b/firetest-d88ea.appspot.com/o/UrpVedioTest.MOV?alt=media&token=58e3377a-d5f4-480f-bd04-65f89856b267">
+<source src="https://firebasestorage.googleapis.com/v0/b/firetest-d88ea/*.*/appspot.com/o/UrpVedioTest.MOV?alt=media&token=58e3377a-d5f4-480f-bd04-65f89856b267">
 </video>
 </div>
 </div>
 <div id = "debug_div">debug result</div>
 <button onclick="pre()">pre</button>
-<button id="button_auto" onclick="dataGenration()">auto</button> <button id="button_stop" onclick="dataStop()" style="display:none">Stop</button>
+<button id="button_auto" onclick="dataAuto()">auto</button> <button id="button_stop" onclick="dataStop()" style="display:none">Stop</button>
 <button onclick="forward()">forward</button>
 <input id="command" type="text" value="input commands">
 
@@ -44,16 +44,12 @@ var svg = d3.select("body").select("svg");
 var networkData;
 
 var layerData = [];
-var layerDataS = new Array(); //layerData/time
 var layer = [];
 var layerNum = 5; //metaData; layerData.length
 
 var nodeData = [];
-var nodeDataS = [];//nodeData/time
 var node = [[],[],[],[],[],[],[],[],[],[],[]];
 var nodeNum = [6,6,6,6]; //metaData; nodeData[i].length
-
-var dataTime = 0;
 
 var lineData = [];
 init();
@@ -61,10 +57,9 @@ database.ref('/tensorData/').on('value', function(snapshot){
 		  networkData = snapshot.val();
 		  console.log('firebase change : ');
       layerData = networkData.layer;
-      layerDataS.push(layerData);
+
       nodeData = networkData.node;
-      nodeDataS.push(nodeData)
-      dataTime = dataTime + 1;
+
       layerNum = layerData.length;
       for(var i = 0; i<nodeData.length; i++){
         nodeNum[i] = layerData[i].length;
@@ -172,51 +167,28 @@ function init(){
       }
 
 }
-var playAlert;
 
 function pre(){
-  dataTime = dataTime - 1;
-  if(dataTime < 0){
-    alert("First data index!");
-    dataTime = 0;
-  }
-  layerData = layerDataS[dataTime];
-  nodeData = nodeDataS[dataTime];
-  update();
+
+  database.ref('/command').set("pre");
 }
 
-function dataGenration(){
-	clearInterval(playAlert)
-	playAlert = setInterval(function() {
-	  var i = 1+parseInt(""+2*Math.random());
-	  var j = 1+parseInt(""+4*Math.random());
-	  database.ref('/tensorData/layer/'+i+"/"+j).set(parseInt(""+20*Math.random()));
-	  i = parseInt(""+4*Math.random());
-	  j = parseInt(""+5*Math.random());
-	  var k = parseInt(""+5*Math.random());
-	  database.ref('/tensorData/node/'+i+"/"+j+"/"+k).set(parseInt(""+5*Math.random()))
-	}, 500);
+function dataAuto(){
+	database.ref('/command').set("auto");
+
   $('#button_auto').hide();
   $('#button_stop').show();
 }
 
 function dataStop(){
-	clearInterval(playAlert);
+	database.ref('/command').set("dataStop");
   $('#button_auto').show();
   $('#button_stop').hide();
 }
 
 
 function forward(){
-	clearInterval(playAlert);
-  dataTime = dataTime + 1;
-  if(dataTime >= layerDataS.length){
-    alert("Last data index!");
-    dataTime = layerDataS.length -1;
-  }
-  layerData = layerDataS[dataTime];
-  nodeData = nodeDataS[dataTime];
-  update();
+	database.ref('/command').set("forward");
 }
 
 function update(){
